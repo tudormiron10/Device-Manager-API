@@ -1,0 +1,35 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.vs/
+*.DotSettings.user
+publish/
+
+# Node / Angular
+node_modules/
+dist/
+.angular/
+.sass-cache/
+npm-debug.log*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Environment
+.env
+*.local
+
+# Docker
+docker-compose.override.yml
+
+# MongoDB data (if running locally)
+/data/
