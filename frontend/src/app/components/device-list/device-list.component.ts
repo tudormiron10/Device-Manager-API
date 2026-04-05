@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ApiService } from '../../services/api.service';
+import { AuthService } from '../../services/auth.service';
 import { DeviceDto } from '../../models/api.models';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog.component';
 
@@ -20,6 +21,7 @@ export class DeviceListComponent implements OnInit {
   private apiService = inject(ApiService);
   private snackBar = inject(MatSnackBar);
   private dialog = inject(MatDialog);
+  authService = inject(AuthService);
 
   devices: DeviceDto[] = [];
   displayedColumns: string[] = ['name', 'manufacturer', 'type', 'assignedUserName', 'actions'];
@@ -51,7 +53,10 @@ export class DeviceListComponent implements OnInit {
             this.snackBar.open('Device deleted successfully', 'Close', { duration: 3000 });
             this.loadDevices();
           },
-          error: (err) => this.snackBar.open('Error deleting device', 'Close', { duration: 3000 })
+          error: (err) => {
+            const message = err.error?.message || 'Error deleting device';
+            this.snackBar.open(message, 'Close', { duration: 5000 });
+          }
         });
       }
     });

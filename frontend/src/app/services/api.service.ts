@@ -33,4 +33,12 @@ export class ApiService {
   getUsers(): Observable<UserDto[]> {
     return this.http.get<UserDto[]>(`${this.BASE_URL}/Users`);
   }
+
+  assignDevice(id: string): Observable<DeviceDto> {
+    return this.http.post<DeviceDto>(`${this.BASE_URL}/Devices/${id}/assign`, {});
+  }
+
+  unassignDevice(id: string): Observable<DeviceDto> {
+    return this.http.post<DeviceDto>(`${this.BASE_URL}/Devices/${id}/unassign`, {});
+  }
 }

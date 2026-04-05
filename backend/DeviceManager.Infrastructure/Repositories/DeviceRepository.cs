@@ -80,4 +80,38 @@ public class DeviceRepository : IDeviceRepository
         var result = await _devices.DeleteOneAsync(d => d.Id == id);
         return result.DeletedCount > 0;
     }
+
+    public async Task<Device?> AssignDeviceAsync(string deviceId, string userId)
+    {
+        if (!ObjectId.TryParse(deviceId, out _))
+            return null;
+
+        var update = Builders<Device>.Update
+            .Set(d => d.AssignedUserId, userId)
+            .Set(d => d.UpdatedAt, DateTime.UtcNow);
+
+        var result = await _devices.FindOneAndUpdateAsync(
+            d => d.Id == deviceId,
+            update,
+            new FindOneAndUpdateOptions<Device> { ReturnDocument = ReturnDocument.After });
+
+        return result;
+    }
+
+    public async Task<Device?> UnassignDeviceAsync(string deviceId)
+    {
+        if (!ObjectId.TryParse(deviceId, out _))
+            return null;
+
+        var update = Builders<Device>.Update
+            .Set(d => d.AssignedUserId, (string?)null)
+            .Set(d => d.UpdatedAt, DateTime.UtcNow);
+
+        var result = await _devices.FindOneAndUpdateAsync(
+            d => d.Id == deviceId,
+            update,
+            new FindOneAndUpdateOptions<Device> { ReturnDocument = ReturnDocument.After });
+
+        return result;
+    }
 }

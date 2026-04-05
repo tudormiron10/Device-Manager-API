@@ -1,6 +1,8 @@
 using DeviceManager.Core.DTOs;
 using DeviceManager.Core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace DeviceManager.API.Controllers;
 
@@ -16,7 +18,7 @@ public class DevicesController : ControllerBase
     }
 
     /// <summary>
-    /// GET /api/devices - Returns all devices with assigned user info.
+    /// GET /api/devices - Returns all devices with assigned user info. Public endpoint.
     /// </summary>
     [HttpGet]
     public async Task<ActionResult<List<DeviceDto>>> GetAll()
@@ -26,7 +28,7 @@ public class DevicesController : ControllerBase
     }
 
     /// <summary>
-    /// GET /api/devices/{id} - Returns a single device by ID.
+    /// GET /api/devices/{id} - Returns a single device by ID. Public endpoint.
     /// </summary>
     [HttpGet("{id}")]
     public async Task<ActionResult<DeviceDto>> GetById(string id)
@@ -36,10 +38,10 @@ public class DevicesController : ControllerBase
     }
 
     /// <summary>
-    /// POST /api/devices - Creates a new device.
-    /// Validates that the device does not already exist (by name + manufacturer).
+    /// POST /api/devices - Creates a new device. Requires elevated permissions.
     /// </summary>
     [HttpPost]
+    [Authorize(Roles = "Hardware Specialist,Project Manager")]
     public async Task<ActionResult<DeviceDto>> Create([FromBody] CreateDeviceDto dto)
     {
         var created = await _deviceService.CreateDeviceAsync(dto);
@@ -47,9 +49,10 @@ public class DevicesController : ControllerBase
     }
 
     /// <summary>
-    /// PUT /api/devices/{id} - Updates an existing device.
+    /// PUT /api/devices/{id} - Updates an existing device. Requires elevated permissions.
     /// </summary>
     [HttpPut("{id}")]
+    [Authorize(Roles = "Hardware Specialist,Project Manager")]
     public async Task<ActionResult> Update(string id, [FromBody] UpdateDeviceDto dto)
     {
         await _deviceService.UpdateDeviceAsync(id, dto);
@@ -57,12 +60,43 @@ public class DevicesController : ControllerBase
     }
 
     /// <summary>
-    /// DELETE /api/devices/{id} - Deletes a device.
+    /// DELETE /api/devices/{id} - Deletes a device. Requires elevated permissions.
     /// </summary>
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Hardware Specialist,Project Manager")]
     public async Task<ActionResult> Delete(string id)
     {
         await _deviceService.DeleteDeviceAsync(id);
         return NoContent();
+    }
+
+    /// <summary>
+    /// POST /api/devices/{id}/assign - Assigns the device to the authenticated user.
+    /// Fails if the device is already assigned to a different user.
+    /// </summary>
+    [HttpPost("{id}/assign")]
+    [Authorize]
+    public async Task<ActionResult<DeviceDto>> Assign(string id)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? User.FindFirstValue(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub)!;
+
+        var device = await _deviceService.AssignDeviceAsync(id, userId);
+        return Ok(device);
+    }
+
+    /// <summary>
+    /// POST /api/devices/{id}/unassign - Unassigns the device from the authenticated user.
+    /// Fails if the device is assigned to a different user.
+    /// </summary>
+    [HttpPost("{id}/unassign")]
+    [Authorize]
+    public async Task<ActionResult<DeviceDto>> Unassign(string id)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? User.FindFirstValue(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub)!;
+
+        var device = await _deviceService.UnassignDeviceAsync(id, userId);
+        return Ok(device);
     }
 }

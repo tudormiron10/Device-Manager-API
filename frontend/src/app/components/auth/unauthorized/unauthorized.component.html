@@ -1,0 +1,48 @@
+<div class="min-h-[85vh] flex items-center justify-center p-4">
+  <div class="max-w-xl w-full bg-white shadow-[0_15px_50px_-15px_rgba(23,42,58,0.5)] rounded-xl overflow-hidden border-[4px] border-primary relative">
+    
+    <!-- Header (Industrial Style) -->
+    <div class="px-4 sm:px-8 py-10 border-b-[4px] border-secondary bg-gray-50/80 text-center relative overflow-hidden">
+      <div class="absolute -top-4 -right-4 opacity-5 pointer-events-none rotate-12">
+        <mat-icon style="width: 140px; height: 140px; font-size: 140px;">warning</mat-icon>
+      </div>
+      
+      <div class="inline-flex items-center justify-center w-20 h-20 rounded-xl bg-primary text-white mb-6 shadow-xl border-2 border-secondary/20">
+        <mat-icon class="!w-12 !h-12 !text-5xl">shield</mat-icon>
+      </div>
+      <h2 class="text-3xl font-black uppercase tracking-[0.25em] text-primary m-0">Access Denied</h2>
+      <p class="mt-3 text-[11px] font-black uppercase tracking-[0.4em] text-secondary">Protocol Unauthorized</p>
+    </div>
+
+    <div class="p-10 lg:p-12 text-center bg-white">
+      <div class="bg-gray-50 p-8 rounded-lg border-2 border-gray-200 shadow-sm relative overflow-hidden mb-10">
+        <div class="absolute top-0 left-0 w-1.5 h-full bg-red-600"></div>
+        <p class="text-sm font-bold uppercase tracking-widest text-primary leading-loose">
+          Your operator credentials do not have the required authorization levels to perform this operation on the active node.
+        </p>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-4 items-center justify-center">
+        <button routerLink="/devices" 
+                class="w-full sm:w-auto px-8 py-4 bg-[#1e293b] text-white font-black uppercase tracking-[0.15em] text-xs rounded-md shadow-md hover:bg-slate-800 transition-all active:translate-y-1">
+          <mat-icon class="mr-2">undo</mat-icon> System Return
+        </button>
+        
+        <button (click)="logoutAndReturn()" 
+                class="w-full sm:w-auto px-8 py-4 bg-secondary text-white font-black uppercase tracking-[0.15em] text-xs rounded-md border-b-[4px] border-primary hover:bg-primary-hover active:border-b-0 active:translate-y-[4px] transition-all">
+          <mat-icon class="mr-2">security</mat-icon> Switch Operator
+        </button>
+      </div>
+    </div>
+
+    <!-- Technical Footer -->
+    <div class="bg-gray-50 border-t-2 border-gray-100 p-4 flex justify-center items-center">
+      <div class="flex items-baseline">
+        <span class="w-1.5 h-1.5 bg-red-600 rounded-full mr-2 animate-pulse"></span>
+        <p class="text-[9px] font-black uppercase tracking-[0.3em] text-gray-400">
+           Restricted access
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

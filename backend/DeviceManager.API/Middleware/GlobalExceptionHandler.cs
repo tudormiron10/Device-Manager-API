@@ -50,6 +50,8 @@ public class GlobalExceptionHandler : IExceptionHandler
         {
             NotFoundException notFoundException => (StatusCodes.Status404NotFound, notFoundException.Message),
             ConflictException conflictException => (StatusCodes.Status409Conflict, conflictException.Message),
+            UnauthorizedException unauthorizedException => (StatusCodes.Status401Unauthorized, unauthorizedException.Message),
+            ForbiddenException forbiddenException => (StatusCodes.Status403Forbidden, forbiddenException.Message),
             _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred.")
         };
     }

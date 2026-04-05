@@ -1,7 +1,10 @@
 <div class="max-w-4xl mx-auto">
   <!-- Loading State -->
-  <div *ngIf="loading" class="flex justify-center items-center py-20">
-    <mat-spinner color="primary"></mat-spinner>
+  <div *ngIf="loading" class="flex justify-center items-center py-20 text-center">
+    <div>
+      <mat-spinner color="primary" class="mx-auto mb-4"></mat-spinner>
+      <p class="text-xs font-black uppercase tracking-widest text-primary animate-pulse">Syncing Hardware Data...</p>
+    </div>
   </div>
 
   <!-- Error State -->
@@ -18,20 +21,19 @@
   <!-- Device Content -->
   <div *ngIf="!loading && !error && device" class="bg-white shadow-[0_15px_50px_-15px_rgba(23,42,58,0.5)] rounded-xl overflow-hidden border-[4px] border-primary relative mt-4">
     <div class="bg-gray-50/80 px-4 sm:px-8 py-6 border-b-[4px] border-secondary flex flex-col sm:flex-row justify-between items-center gap-6 sm:gap-0 text-center sm:text-left">
-      <div class="flex flex-col sm:flex-row items-center gap-4 sm:space-x-4">
-        <button (click)="goBack()" class="flex items-center justify-center p-2 bg-gray-200 text-primary border-2 border-transparent hover:border-primary rounded-md transition-all hover:shadow-md h-[44px]">
+      <div class="flex items-center gap-4 sm:gap-6">
+        <button (click)="goBack()" class="flex items-center justify-center p-2 bg-gray-200 text-primary border-2 border-transparent hover:border-primary rounded-md transition-all hover:shadow-md h-[48px] w-[48px] shrink-0">
           <mat-icon style="font-size: 24px; width: 24px; height: 24px;">arrow_back</mat-icon>
         </button>
-        <div class="flex flex-wrap justify-center sm:justify-start items-center gap-3">
-          <h2 class="text-2xl sm:text-3xl font-black text-primary uppercase tracking-widest m-0 leading-none mt-1.5">{{device.name}}</h2>
-          <span class="w-24 justify-center px-2 py-1 inline-flex text-xs leading-5 font-black uppercase tracking-widest rounded-md bg-primary text-white border-l-[3px] border-light">
-            {{device.type}}
-          </span>
+        <div class="flex flex-wrap items-center gap-4">
+          <h2 class="text-2xl sm:text-4xl font-black text-primary uppercase tracking-widest m-0 leading-none">{{device.name}}</h2>
         </div>
       </div>
-      <div class="w-full sm:w-auto mt-4 sm:mt-0">
+      
+      <!-- Management Actions (Conditional) -->
+      <div class="w-full sm:w-auto mt-4 sm:mt-0 flex gap-4" *ngIf="authService.hasPrivilegedRole()">
         <button [routerLink]="['/devices/edit', device.id]" 
-                class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 font-black uppercase tracking-[0.15em] text-white transition-all duration-300 bg-secondary border-b-[4px] border-primary rounded-md hover:bg-primary-hover hover:border-primary hover:shadow-[0_0_20px_rgba(119,47,26,0.7)] active:border-b-0 active:translate-y-[4px]">
+                class="inline-flex items-center justify-center px-6 py-3 font-black uppercase tracking-[0.15em] text-white transition-all duration-300 bg-secondary border-b-[4px] border-primary rounded-md hover:bg-primary-hover active:border-b-0 active:translate-y-[4px]">
           <mat-icon class="mr-2">edit_square</mat-icon> Modify
         </button>
       </div>
@@ -44,24 +46,33 @@
         <div class="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm relative overflow-hidden">
           <div class="absolute top-0 left-0 w-1 h-full bg-secondary"></div>
           <h3 class="text-lg font-black uppercase tracking-widest text-primary mb-6 flex items-center">
-            <mat-icon class="mr-3 text-secondary">memory</mat-icon> Hardware Data
+            <mat-icon class="mr-3 text-secondary">memory</mat-icon> Hardware
           </h3>
           <mat-divider class="mb-6 border-gray-300"></mat-divider>
           
           <dl class="space-y-5">
-            <div class="flex justify-between items-center">
-              <dt class="text-xs font-bold uppercase tracking-wider text-gray-500">Manufacturer</dt>
-              <dd class="text-sm font-black text-primary">{{device.manufacturer}}</dd>
+            <div class="flex justify-between items-center text-sm">
+              <dt class="font-bold uppercase tracking-wider text-gray-500">Manufacturer</dt>
+              <dd class="font-black text-primary">{{device.manufacturer}}</dd>
             </div>
             <mat-divider class="border-gray-100"></mat-divider>
-            <div class="flex justify-between items-center">
-              <dt class="text-xs font-bold uppercase tracking-wider text-gray-500">Processor</dt>
-              <dd class="text-sm font-black text-primary">{{device.processor}}</dd>
+            <div class="flex justify-between items-center text-sm">
+              <dt class="font-bold uppercase tracking-wider text-gray-500">Processor</dt>
+              <dd class="font-black text-primary">{{device.processor}}</dd>
             </div>
             <mat-divider class="border-gray-100"></mat-divider>
-            <div class="flex justify-between items-center">
-              <dt class="text-xs font-bold uppercase tracking-wider text-gray-500">Memory (RAM)</dt>
-              <dd class="text-sm font-black text-primary">{{device.ramAmount}}</dd>
+            <div class="flex justify-between items-center text-sm">
+              <dt class="font-bold uppercase tracking-wider text-gray-500">Memory (RAM)</dt>
+              <dd class="font-black text-primary">{{device.ramAmount}}</dd>
+            </div>
+            <mat-divider class="border-gray-100"></mat-divider>
+            <div class="flex justify-between items-center text-sm">
+              <dt class="font-bold uppercase tracking-wider text-gray-500">Device Class</dt>
+              <dd class="font-black text-primary">
+                <span class="inline-flex items-center justify-center px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.15em] rounded-md bg-[#1e293b] text-white border-l-[3px] border-secondary">
+                  {{device.type}}
+                </span>
+              </dd>
             </div>
           </dl>
         </div>
@@ -70,28 +81,78 @@
         <div class="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm relative overflow-hidden">
           <div class="absolute top-0 left-0 w-1 h-full bg-primary-hover"></div>
           <h3 class="text-lg font-black uppercase tracking-widest text-primary mb-6 flex items-center">
-            <mat-icon class="mr-3 text-primary-hover">data_array</mat-icon> Software Link
+            <mat-icon class="mr-3 text-primary-hover">data_array</mat-icon> Software
           </h3>
           <mat-divider class="mb-6 border-gray-300"></mat-divider>
           
           <dl class="space-y-5">
-            <div class="flex justify-between items-center">
-              <dt class="text-xs font-bold uppercase tracking-wider text-gray-500">System Core</dt>
-              <dd class="text-sm font-black text-primary">{{device.os}}</dd>
+            <div class="flex justify-between items-center text-sm">
+              <dt class="font-bold uppercase tracking-wider text-gray-500">System Core</dt>
+              <dd class="font-black text-primary">{{device.os}}</dd>
             </div>
             <mat-divider class="border-gray-100"></mat-divider>
-            <div class="flex justify-between items-center">
-              <dt class="text-xs font-bold uppercase tracking-wider text-gray-500">Version Sync</dt>
-              <dd class="text-sm font-black text-primary">{{device.osVersion}}</dd>
+            <div class="flex justify-between items-center text-sm">
+              <dt class="font-bold uppercase tracking-wider text-gray-500">Version Sync</dt>
+              <dd class="font-black text-primary">{{device.osVersion}}</dd>
             </div>
           </dl>
         </div>
 
-        <!-- Assignment / Misc Specs -->
+        <!-- Logistics Core -->
         <div class="col-span-1 md:col-span-2 bg-gray-50 p-8 rounded-lg border-2 border-gray-200 shadow-sm mt-4">
-          <h3 class="text-lg font-black uppercase tracking-widest text-primary mb-6 flex items-center">
-            <mat-icon class="mr-3 text-dark">hub</mat-icon> Logistics Core
-          </h3>
+          <!-- Dynamic Location Distribution -->
+          <div class="mb-8 p-5 bg-white border-2 border-gray-100 rounded-xl shadow-sm flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center">
+              <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mr-4 border-2 border-blue-100">
+                <mat-icon class="text-blue-600">location_on</mat-icon>
+              </div>
+              <div class="flex flex-col">
+                <span class="text-[10px] font-black uppercase tracking-[0.25em] text-gray-400">Current Distribution</span>
+                <span class="text-xl font-black text-primary tracking-wide">{{ device.location || 'Central Inventory' }}</span>
+              </div>
+            </div>
+            <div class="flex flex-col items-center sm:items-end bg-gray-50/50 px-4 py-2 rounded-lg border border-gray-100" *ngIf="device.assignedUserId">
+              <span class="text-[9px] font-black uppercase tracking-[0.2em] text-secondary">Active Operator</span>
+              <span class="text-sm font-bold text-primary">{{ device.assignedUserName }}</span>
+            </div>
+          </div>
+
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+            <h3 class="text-lg font-black uppercase tracking-widest text-primary flex items-center m-0">
+              <mat-icon class="mr-3 text-dark">hub</mat-icon> Logistics Core
+            </h3>
+            
+            <!-- Assignment Actions -->
+            <div *ngIf="authService.currentUser$ | async as currentUser" class="w-full md:w-auto">
+              <!-- Case 1: Device is unassigned -->
+              <button *ngIf="!device.assignedUserId" 
+                      (click)="assignToMe()" [disabled]="isActionLoading"
+                      class="w-full md:w-auto inline-flex items-center justify-center px-6 py-2 bg-primary text-white font-black uppercase tracking-widest text-sm rounded border-b-4 border-dark hover:bg-primary-hover active:border-b-0 active:translate-y-1 transition-all">
+                <mat-icon class="mr-2">assignment_ind</mat-icon>
+                {{ isActionLoading ? 'Processing...' : 'Assign to Me' }}
+              </button>
+
+              <!-- Case 2: Device is assigned to the current user -->
+              <button *ngIf="device.assignedUserId === currentUser.userId" 
+                      (click)="unassign()" [disabled]="isActionLoading"
+                      class="w-full md:w-auto inline-flex items-center justify-center px-6 py-2 bg-red-700 text-white font-black uppercase tracking-widest text-sm rounded border-b-4 border-red-950 hover:bg-red-800 active:border-b-0 active:translate-y-1 transition-all">
+                <mat-icon class="mr-2">assignment_return</mat-icon>
+                {{ isActionLoading ? 'Processing...' : 'Return to Inventory' }}
+              </button>
+
+              <!-- Case 3: Device is assigned to someone else -->
+              <div *ngIf="device.assignedUserId && device.assignedUserId !== currentUser.userId"
+                   class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-500 font-bold uppercase tracking-widest text-xs rounded border border-gray-300 cursor-not-allowed">
+                <mat-icon class="mr-2 text-sm">lock</mat-icon> Assigned to {{device.assignedUserName}}
+              </div>
+            </div>
+
+            <div *ngIf="!(authService.currentUser$ | async)" 
+                 class="text-xs font-bold uppercase tracking-tighter text-gray-400 bg-gray-100 px-3 py-1 rounded">
+              Login to modify assignment
+            </div>
+          </div>
+
           <mat-divider class="mb-6 border-gray-300"></mat-divider>
 
           <dl class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -99,7 +160,7 @@
               <dt class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Active User Assignment</dt>
               <dd class="mt-2 text-lg font-black text-primary flex items-center">
                 <mat-icon class="mr-2 text-secondary">person_pin</mat-icon>
-                {{device.assignedUserName || 'Unassigned'}}
+                {{device.assignedUserName || 'Available for Assignment'}}
               </dd>
             </div>
             

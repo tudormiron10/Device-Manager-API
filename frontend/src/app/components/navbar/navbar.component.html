@@ -1,26 +1,72 @@
-<nav class="bg-primary text-light shadow-lg border-b-4 border-primary-hover transition-all">
-  <!-- Increased width from max-w-7xl to full width and adjusted height padding -->
-  <div class="w-full px-6 md:px-12 lg:px-16">
-    <div class="flex flex-col md:flex-row items-center justify-between min-h-28 py-4 md:py-0 gap-6 md:gap-0 mt-4 md:mt-0">
+<nav class="bg-[#0f172a] text-white shadow-2xl border-b-[6px] border-[#1e293b] py-2">
+  <div class="xl:container mx-auto px-6">
+    <div class="flex flex-col lg:flex-row items-center justify-between min-h-[80px] gap-6 lg:gap-0">
       
       <!-- Logo / Branding -->
-      <div class="flex-shrink-0 flex items-center cursor-pointer transition-transform duration-300 hover:scale-105 text-center" routerLink="/">
-        <mat-icon class="text-secondary text-2xl md:text-3xl mr-2 md:mr-3 transform scale-110 md:scale-125" style="height: auto; width: auto">devices_other</mat-icon>
-        <span class="font-bold text-xl md:text-3xl tracking-wide uppercase text-white shadow-sm leading-tight">MarshTech Device Manager</span>
+      <div class="flex items-center cursor-pointer hover:opacity-80 transition-opacity" routerLink="/">
+        <mat-icon class="text-[#38bdf8] mr-3" style="width: 40px; height: 40px; font-size: 40px;">terminal</mat-icon>
+        <div class="flex flex-col">
+          <span class="font-black text-2xl tracking-[0.2em] uppercase leading-none">MarshTech</span>
+          <span class="text-[10px] font-bold tracking-[0.4em] uppercase text-[#38bdf8]">Logistics Interface</span>
+        </div>
       </div>
       
-      <!-- Navigation Links -->
-      <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6 w-full md:w-auto pb-4 md:pb-0">
+      <!-- Right Side Actions -->
+      <div class="flex flex-wrap items-center justify-center gap-4">
         
-        <a routerLink="/devices" routerLinkActive="!bg-primary-hover !border-b-0 !shadow-[0_0_20px_rgba(37,69,33,0.8)] translate-y-[4px]" [routerLinkActiveOptions]="{exact: true}"
-           class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 font-black uppercase tracking-[0.15em] text-white transition-all duration-300 bg-secondary border-b-[4px] border-dark rounded-md hover:bg-primary-hover hover:border-primary-hover hover:shadow-[0_0_20px_rgba(37,69,33,0.8)] active:border-b-0 active:translate-y-[4px]">
-          <mat-icon class="mr-2">list</mat-icon> Devices List
+        <!-- Inventory Button (Industrial Green) -->
+        <a routerLink="/devices" routerLinkActive="ring-2 ring-white/50 bg-[#2d4d29]" [routerLinkActiveOptions]="{exact: true}"
+           class="flex items-center px-6 py-3 bg-[#1e3a1a] border-b-4 border-[#0d1f0b] rounded-lg font-black uppercase tracking-widest text-sm hover:bg-[#254521] active:translate-y-[2px] active:border-b-0 transition-all">
+          <mat-icon class="mr-2">inventory</mat-icon> Inventory
         </a>
-        
-        <a routerLink="/devices/new" routerLinkActive="!bg-primary-hover !border-b-0 !shadow-[0_0_20px_rgba(37,69,33,0.8)] translate-y-[4px]" 
-           class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 font-black uppercase tracking-[0.15em] text-white transition-all duration-300 bg-secondary border-b-[4px] border-dark rounded-md hover:bg-primary-hover hover:border-primary-hover hover:shadow-[0_0_20px_rgba(37,69,33,0.8)] active:border-b-0 active:translate-y-[4px]">
-           <mat-icon class="mr-2">add_task</mat-icon> Create Device
-        </a>
+
+        <!-- Logged In: Operator Menu -->
+        <ng-container *ngIf="authService.currentUser$ | async as user; else guestMode">
+          
+          <button [matMenuTriggerFor]="userMenu"
+                  class="flex items-center px-4 py-3 bg-[#1e293b] border-b-4 border-[#0f172a] rounded-lg hover:bg-[#334155] transition-all">
+            <div class="flex flex-col items-end mr-3">
+              <span class="text-[9px] font-black uppercase text-[#38bdf8] tracking-[0.2em]">Logged as</span>
+              <span class="text-xs font-bold uppercase tracking-wider">Operator</span>
+            </div>
+            <mat-icon class="text-[#38bdf8]">account_circle</mat-icon>
+            <mat-icon class="text-gray-500 scale-75">expand_more</mat-icon>
+          </button>
+
+          <mat-menu #userMenu="matMenu" class="industrial-menu">
+            <div class="px-4 py-3 border-b border-gray-100 mb-1">
+              <span class="block text-[10px] font-black text-gray-400 uppercase tracking-widest">Connected User</span>
+              <span class="block font-bold text-sm text-gray-800">{{user.name}}</span>
+              <span class="block text-[9px] font-black text-blue-600 uppercase tracking-widest mt-0.5">{{user.role}}</span>
+            </div>
+            
+            <button mat-menu-item routerLink="/devices/new" *ngIf="authService.hasPrivilegedRole()">
+              <mat-icon class="text-blue-600">add_box</mat-icon>
+              <span class="font-bold text-xs uppercase tracking-widest text-gray-700">New Hardware</span>
+            </button>
+            
+            <mat-divider></mat-divider>
+            
+            <button mat-menu-item (click)="logout()">
+              <mat-icon class="text-red-500">power_settings_new</mat-icon>
+              <span class="font-bold text-xs uppercase tracking-widest text-red-600">Exit System</span>
+            </button>
+          </mat-menu>
+
+        </ng-container>
+
+        <!-- Guest: Login / Sign Up -->
+        <ng-template #guestMode>
+          <a routerLink="/login" 
+             class="flex items-center px-6 py-3 bg-blue-700 border-b-4 border-blue-900 rounded-lg font-black uppercase tracking-widest text-sm hover:bg-blue-600 active:translate-y-[2px] active:border-b-0 transition-all text-white">
+            <mat-icon class="mr-2">login</mat-icon> Login
+          </a>
+          
+          <a routerLink="/register" 
+             class="px-6 py-3 border-2 border-white/20 rounded-lg font-black uppercase tracking-widest text-xs hover:bg-white/10 transition-all opacity-70 hover:opacity-100">
+            Sign Up
+          </a>
+        </ng-template>
         
       </div>
     </div>

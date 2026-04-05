@@ -1,80 +1,91 @@
-<div class="bg-white shadow-[0_15px_50px_-15px_rgba(23,42,58,0.5)] rounded-xl overflow-hidden border-[4px] border-primary relative">
-  <div class="px-4 sm:px-8 py-6 border-b-[4px] border-secondary flex flex-col sm:flex-row justify-between items-center bg-gray-50/80 gap-4 sm:gap-0 text-center sm:text-left">
-    <div>
-      <h3 class="text-2xl sm:text-3xl leading-6 font-black uppercase tracking-wider text-primary">Device Inventory</h3>
-      <p class="mt-2 text-xs sm:text-sm font-medium text-dark tracking-wide">A comprehensive list of all managed hardware assets.</p>
+<div class="bg-white shadow-2xl rounded-lg overflow-hidden border-[6px] border-[#1e293b] relative">
+  <!-- Header Bar -->
+  <div class="px-8 py-8 border-b-[6px] border-[#1e293b] flex flex-col lg:flex-row justify-between items-center bg-[#f8fafc] gap-6">
+    <div class="flex items-center">
+        <div class="w-16 h-16 bg-[#1e3a1a] rounded flex items-center justify-center mr-6 shadow-lg border-2 border-[#254521]">
+            <mat-icon class="text-white scale-125">inventory_2</mat-icon>
+        </div>
+        <div>
+            <h3 class="text-3xl font-black uppercase tracking-[0.2em] text-[#0f172a] leading-none">Global Inventory</h3>
+            <p class="mt-2 text-[10px] font-bold text-gray-500 uppercase tracking-[0.3em]">Hardware Asset Management </p>
+        </div>
     </div>
-    <button routerLink="/devices/new" 
-            class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 font-black uppercase tracking-[0.15em] text-white transition-all duration-300 bg-primary border-b-[4px] border-secondary rounded-md hover:bg-primary-hover hover:border-primary hover:shadow-[0_0_20px_rgba(23,42,58,0.7)] active:border-b-0 active:translate-y-[4px]">
-      <mat-icon class="mr-2">add_task</mat-icon>
-      New Device
+    
+    <button *ngIf="authService.hasPrivilegedRole()" routerLink="/devices/new" 
+            class="group relative flex items-center px-8 py-4 bg-[#1e3a1a] border-b-4 border-[#0d1f0b] rounded-lg font-black uppercase tracking-[0.2em] text-white hover:bg-[#254521] active:translate-y-[2px] active:border-b-0 transition-all shadow-md">
+      <mat-icon class="mr-3 transition-transform group-hover:rotate-90">add_box</mat-icon>
+      Register Asset
     </button>
   </div>
 
   <div class="p-0 overflow-x-auto">
-    <table mat-table [dataSource]="devices" class="w-full min-w-[800px]">
+    <table mat-table [dataSource]="devices" class="w-full min-w-[900px] industrial-table">
+      
+      <!-- Name Column -->
       <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef class="!text-center !text-primary !font-black !text-sm !uppercase !tracking-wider !border-b-[3px] !border-gray-300 !bg-gray-100"> Name </th>
-        <td mat-cell *matCellDef="let device" class="!text-center font-bold text-primary !border-b !border-gray-200"> {{device.name}} </td>
+        <th mat-header-cell *matHeaderCellDef class="!bg-[#1e293b] !text-[#38bdf8] !font-black !text-[10px] !uppercase !tracking-[0.2em] !py-4 !text-center"> Device Name </th>
+        <td mat-cell *matCellDef="let device" class="!py-4 !text-center">
+            <span class="font-black text-[#0f172a] text-sm tracking-tight">{{device.name}}</span>
+        </td>
       </ng-container>
 
+      <!-- Manufacturer Column -->
       <ng-container matColumnDef="manufacturer">
-        <th mat-header-cell *matHeaderCellDef class="!text-center !text-primary !font-black !text-sm !uppercase !tracking-wider !border-b-[3px] !border-gray-300 !bg-gray-100"> Manufacturer </th>
-        <td mat-cell *matCellDef="let device" class="!text-center !border-b !border-gray-200 font-medium"> {{device.manufacturer}} </td>
+        <th mat-header-cell *matHeaderCellDef class="!bg-[#1e293b] !text-[#38bdf8] !font-black !text-[10px] !uppercase !tracking-[0.2em] !text-center"> Manufacturer </th>
+        <td mat-cell *matCellDef="let device" class="!text-gray-600 font-bold text-xs uppercase tracking-wider !text-center"> {{device.manufacturer}} </td>
       </ng-container>
 
+      <!-- Type Column -->
       <ng-container matColumnDef="type">
-        <th mat-header-cell *matHeaderCellDef class="!text-center !text-primary !font-black !text-sm !uppercase !tracking-wider !border-b-[3px] !border-gray-300 !bg-gray-100"> Type </th>
-        <td mat-cell *matCellDef="let device" class="!text-center !border-b !border-gray-200"> 
-          <span class="w-24 justify-center px-2 py-1 inline-flex text-xs leading-5 font-black uppercase tracking-widest rounded-md bg-primary text-white shadow-sm border-l-[3px] border-light">
+        <th mat-header-cell *matHeaderCellDef class="!bg-[#1e293b] !text-[#38bdf8] !font-black !text-[10px] !uppercase !tracking-[0.2em] !text-center"> Type </th>
+        <td mat-cell *matCellDef="let device" class="!text-center"> 
+          <span class="inline-block w-24 py-1 text-[9px] font-black uppercase tracking-[0.2em] rounded border-2 border-[#1e293b] bg-white text-[#1e293b]">
             {{device.type}} 
           </span>
         </td>
       </ng-container>
 
+      <!-- Assignment Column -->
       <ng-container matColumnDef="assignedUserName">
-        <th mat-header-cell *matHeaderCellDef class="!text-center !text-primary !font-black !text-sm !uppercase !tracking-wider !border-b-[3px] !border-gray-300 !bg-gray-100"> Assigned To </th>
-        <td mat-cell *matCellDef="let device" class="!text-center !border-b !border-gray-200"> 
-          @if(device.assignedUserName) {
-            <div class="flex items-center justify-center text-sm font-bold text-secondary">
-                <mat-icon class="text-sm mr-2" style="height: 18px; width: 18px; font-size: 18px;">account_circle</mat-icon>
-                {{device.assignedUserName}}
-            </div>
-          } @else {
-            <span class="text-dark font-black tracking-widest uppercase text-xs opacity-70 block text-center">Unassigned</span>
-          }
+        <th mat-header-cell *matHeaderCellDef class="!bg-[#1e293b] !text-[#38bdf8] !font-black !text-[10px] !uppercase !tracking-[0.2em] !text-center"> Assigned User </th>
+        <td mat-cell *matCellDef="let device"> 
+          <div class="flex justify-center">
+            @if(device.assignedUserName) {
+              <div class="flex items-center text-xs font-black text-[#1e3a1a] uppercase tracking-widest bg-green-50 px-3 py-2 rounded-full w-fit border border-green-200">
+                  <mat-icon class="text-xs mr-2" style="height: 16px; width: 16px; font-size: 16px;">verified</mat-icon>
+                  {{device.assignedUserName}}
+              </div>
+            } @else {
+              <span class="text-gray-300 font-black tracking-[0.2em] uppercase text-[9px]">Unassigned</span>
+            }
+          </div>
         </td>
       </ng-container>
 
+      <!-- Actions Column -->
       <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef class="!text-right !text-primary !font-black !text-sm !uppercase !tracking-wider !border-b-[3px] !border-gray-300 !bg-gray-100 pr-6"> Actions </th>
-        <td mat-cell *matCellDef="let device" class="!text-right !border-b !border-gray-200 pr-4">
-          <button [routerLink]="['/devices', device.id]" matTooltip="View Details" class="p-2 mr-2 bg-gray-100 text-primary border-2 border-transparent hover:border-primary rounded-md transition-all hover:shadow-md">
-            <mat-icon style="font-size: 20px; width: 20px; height: 20px;">visibility</mat-icon>
-          </button>
-          <button (click)="deleteDevice(device.id)" matTooltip="Delete Device" class="p-2 bg-gray-100 text-secondary border-2 border-transparent hover:border-secondary rounded-md transition-all hover:shadow-md">
-            <mat-icon style="font-size: 20px; width: 20px; height: 20px;">delete_outline</mat-icon>
-          </button>
+        <th mat-header-cell *matHeaderCellDef class="!bg-[#1e293b] !text-[#38bdf8] !font-black !text-[10px] !uppercase !tracking-[0.2em] !text-center"> Actions </th>
+        <td mat-cell *matCellDef="let device" class="!text-center">
+          <div class="flex justify-center gap-2">
+            <button [routerLink]="['/devices', device.id]" class="p-3 bg-gray-100 text-[#0f172a] rounded hover:bg-[#38bdf8] hover:text-white transition-colors shadow-sm">
+              <mat-icon style="font-size: 20px; width: 20px; height: 20px;">settings_remote</mat-icon>
+            </button>
+            <button *ngIf="authService.hasPrivilegedRole()" (click)="deleteDevice(device.id)" class="p-3 bg-gray-100 text-red-600 rounded hover:bg-red-600 hover:text-white transition-colors shadow-sm">
+              <mat-icon style="font-size: 20px; width: 20px; height: 20px;">delete_forever</mat-icon>
+            </button>
+          </div>
         </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-light/20 transition-all duration-300"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-blue-50/50 transition-colors"></tr>
     </table>
 
-    <div *ngIf="devices.length === 0" class="text-center py-16 bg-gray-50 border-t-2 border-gray-100 relative">
-      <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiM4RDkwOUIiIGZpbGwtb3BhY2l0eT0iMC4yIi8+PC9zdmc+')]"></div>
-      <div class="relative z-10">
-        <mat-icon class="text-secondary text-6xl mx-auto block mb-4 drop-shadow-md" style="width: 70px; height: 70px; font-size: 70px;">data_object</mat-icon>
-        <h3 class="text-2xl font-black uppercase tracking-widest text-primary drop-shadow-sm">No Hardware Found</h3>
-        <p class="mt-2 text-sm font-medium text-dark tracking-wide">Initialize the system by registering a new device asset.</p>
-        <div class="mt-8">
-          <button routerLink="/devices/new" 
-                  class="inline-flex items-center justify-center px-8 py-4 font-black uppercase tracking-[0.2em] text-white transition-all duration-300 bg-secondary border-b-[4px] border-primary rounded-md hover:bg-primary-hover hover:border-primary hover:shadow-[0_0_30px_rgba(119,47,26,0.8)] active:border-b-0 active:translate-y-[4px]">
-            <mat-icon class="mr-3">add_circle_outline</mat-icon> System Initializer
-          </button>
-        </div>
-      </div>
+    <!-- Empty State -->
+    <div *ngIf="devices.length === 0" class="text-center py-24 bg-gray-50 border-t-2 border-gray-100">
+        <mat-icon class="text-gray-200 scale-[3] mb-12">dashboard_customize</mat-icon>
+        <h3 class="text-xl font-black uppercase tracking-[0.2em] text-[#0f172a]">Terminal Empty</h3>
+        <p class="mt-2 text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em]">Awaiting hardware registration command...</p>
     </div>
   </div>
 </div>

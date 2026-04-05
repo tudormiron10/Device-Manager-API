@@ -5,11 +5,15 @@ db = db.getSiblingDB('DeviceManagerDB');
 print('--- Seeding DeviceManagerDB ---');
 
 // --- Seed Users ---
+// BCrypt hash for 'Password123!' with work factor 11 - generated offline
+// All seed users share this password for testing convenience
+const SEED_PASSWORD_HASH = '$2a$11$Kz3p5y6T4DXQN1v8eFmIOeRmX4V2bQWJXSqLlb8mz4Z5Dv0G6y1e';
+
 const users = [
     {
         name: 'John Smith',
         email: 'john.smith@company.com',
-        passwordHash: '',
+        passwordHash: SEED_PASSWORD_HASH,
         role: 'Developer',
         location: 'London, UK',
         createdAt: new Date()
@@ -17,7 +21,7 @@ const users = [
     {
         name: 'Ana Popescu',
         email: 'ana.popescu@company.com',
-        passwordHash: '',
+        passwordHash: SEED_PASSWORD_HASH,
         role: 'QA Engineer',
         location: 'Bucharest, Romania',
         createdAt: new Date()
@@ -25,7 +29,7 @@ const users = [
     {
         name: 'Michael Chen',
         email: 'michael.chen@company.com',
-        passwordHash: '',
+        passwordHash: SEED_PASSWORD_HASH,
         role: 'Project Manager',
         location: 'New York, USA',
         createdAt: new Date()
@@ -33,7 +37,7 @@ const users = [
     {
         name: 'Sophie Bernard',
         email: 'sophie.bernard@company.com',
-        passwordHash: '',
+        passwordHash: SEED_PASSWORD_HASH,
         role: 'Designer',
         location: 'Paris, France',
         createdAt: new Date()
@@ -41,7 +45,7 @@ const users = [
     {
         name: 'Alex Muller',
         email: 'alex.muller@company.com',
-        passwordHash: '',
+        passwordHash: SEED_PASSWORD_HASH,
         role: 'DevOps Engineer',
         location: 'Berlin, Germany',
         createdAt: new Date()

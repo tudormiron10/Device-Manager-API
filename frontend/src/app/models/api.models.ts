@@ -47,3 +47,29 @@ export interface UserDto {
   location: string;
   createdAt: Date;
 }
+
+export interface LoginDto {
+  email: string;
+  password: string;
+}
+
+export interface RegisterDto {
+  name: string;
+  email: string;
+  password: string;
+  role: string;
+  location: string;
+}
+
+export interface AuthResponseDto {
+  token: string;
+  userId: string;
+  name: string;
+  role: string;
+}
+
+export interface ErrorResponse {
+  statusCode: number;
+  message: string;
+  details?: string;
+}

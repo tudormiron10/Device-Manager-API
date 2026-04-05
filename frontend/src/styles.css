@@ -52,3 +52,69 @@ html, body { height: 100%; }
     border-color: #ffaf87 !important;
     background-color: transparent !important;
 }
+/* --- Industrial Menu Overrides --- */
+.industrial-menu {
+    background-color: #ffffff !important;
+    border: 3px solid #1e293b !important;
+    border-radius: 8px !important;
+    box-shadow: 10px 10px 0px #0f172a !important;
+    min-width: 240px !important;
+}
+
+.industrial-menu .mat-mdc-menu-item {
+    min-height: 48px !important;
+}
+
+.industrial-menu .mat-mdc-menu-item:hover {
+    background-color: #f1f5f9 !important;
+}
+
+/* Custom Scrollbar for Industrial Look */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #334155;
+    border: 2px solid #0f172a;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #38bdf8;
+}
+
+/* --- Industrial Form Field Overrides --- */
+.industrial-field .mdc-notched-outline__leading,
+.industrial-field .mdc-notched-outline__notch,
+.industrial-field .mdc-notched-outline__trailing {
+    border-color: #cbd5e1 !important; /* light gray default */
+    border-width: 2px !important;
+}
+
+.industrial-field.mat-focused .mdc-notched-outline__leading,
+.industrial-field.mat-focused .mdc-notched-outline__notch,
+.industrial-field.mat-focused .mdc-notched-outline__trailing {
+    border-color: #1d4ed8 !important; /* blue-700 focus */
+    border-width: 3px !important;
+}
+
+.industrial-field .mat-mdc-floating-label {
+    color: #64748b !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+}
+
+.industrial-field.mat-focused .mat-mdc-floating-label {
+    color: #1d4ed8 !important;
+}
+
+.industrial-field input {
+    font-weight: 700 !important;
+    color: #0f172a !important;
+}

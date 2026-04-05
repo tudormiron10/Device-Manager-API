@@ -28,14 +28,12 @@ public class DeviceService : IDeviceService
         foreach (var device in devices)
         {
             var dto = MapToDto(device);
-
-            // Resolve assigned user name if a user is assigned
             if (!string.IsNullOrEmpty(device.AssignedUserId))
             {
                 var user = await _userRepository.GetByIdAsync(device.AssignedUserId);
                 dto.AssignedUserName = user?.Name;
+                if (user != null) dto.Location = user.Location;
             }
-
             deviceDtos.Add(dto);
         }
 
@@ -54,6 +52,7 @@ public class DeviceService : IDeviceService
         {
             var user = await _userRepository.GetByIdAsync(device.AssignedUserId);
             dto.AssignedUserName = user?.Name;
+            if (user != null) dto.Location = user.Location;
         }
 
         return dto;
@@ -123,11 +122,57 @@ public class DeviceService : IDeviceService
 
     public async Task<bool> DeleteDeviceAsync(string id)
     {
+        var device = await _deviceRepository.GetByIdAsync(id);
+        if (device == null)
+            throw new NotFoundException("Device", id);
+
+        // Security check: cannot delete a device that is currently assigned
+        if (!string.IsNullOrEmpty(device.AssignedUserId))
+        {
+            throw new ConflictException("Cannot delete an asset that is currently assigned to a user. Please unassign it first in the logistics section.");
+        }
+
         var deleted = await _deviceRepository.DeleteAsync(id);
         if (!deleted)
             throw new NotFoundException("Device", id);
             
         return true;
+    }
+
+    public async Task<DeviceDto> AssignDeviceAsync(string deviceId, string userId)
+    {
+        var device = await _deviceRepository.GetByIdAsync(deviceId);
+        if (device == null)
+            throw new NotFoundException("Device", deviceId);
+
+        // Device already assigned to someone else
+        if (!string.IsNullOrEmpty(device.AssignedUserId) && device.AssignedUserId != userId)
+            throw new ConflictException("This device is already assigned to another user.");
+
+        var updated = await _deviceRepository.AssignDeviceAsync(deviceId, userId)
+            ?? throw new NotFoundException("Device", deviceId);
+
+        var dto = MapToDto(updated);
+        var user = await _userRepository.GetByIdAsync(userId);
+        dto.AssignedUserName = user?.Name;
+        if (user != null) dto.Location = user.Location;
+        return dto;
+    }
+
+    public async Task<DeviceDto> UnassignDeviceAsync(string deviceId, string userId)
+    {
+        var device = await _deviceRepository.GetByIdAsync(deviceId);
+        if (device == null)
+            throw new NotFoundException("Device", deviceId);
+
+        // Only the user who assigned it can unassign it
+        if (device.AssignedUserId != userId)
+            throw new ForbiddenException("You can only unassign a device that is assigned to you.");
+
+        var updated = await _deviceRepository.UnassignDeviceAsync(deviceId)
+            ?? throw new NotFoundException("Device", deviceId);
+
+        return MapToDto(updated);
     }
 
     /// <summary>

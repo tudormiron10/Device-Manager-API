@@ -13,4 +13,6 @@ public interface IDeviceRepository
     Task<Device> CreateAsync(Device device);
     Task<bool> UpdateAsync(string id, Device device);
     Task<bool> DeleteAsync(string id);
+    Task<Device?> AssignDeviceAsync(string deviceId, string userId);
+    Task<Device?> UnassignDeviceAsync(string deviceId);
 }

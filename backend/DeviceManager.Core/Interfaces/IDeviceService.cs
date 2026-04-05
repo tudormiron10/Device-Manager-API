@@ -13,4 +13,6 @@ public interface IDeviceService
     Task<DeviceDto> CreateDeviceAsync(CreateDeviceDto dto);
     Task<bool> UpdateDeviceAsync(string id, UpdateDeviceDto dto);
     Task<bool> DeleteDeviceAsync(string id);
+    Task<DeviceDto> AssignDeviceAsync(string deviceId, string userId);
+    Task<DeviceDto> UnassignDeviceAsync(string deviceId, string userId);
 }
