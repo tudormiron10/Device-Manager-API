@@ -1,0 +1,117 @@
+<div class="max-w-4xl mx-auto">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex justify-center items-center py-20">
+    <mat-spinner color="primary"></mat-spinner>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="bg-gray-50 p-12 rounded-xl border-[4px] border-red-900 text-center shadow-xl">
+    <mat-icon class="text-red-700 text-6xl mb-4" style="height: 64px; width: 64px; font-size: 64px;">error_outline</mat-icon>
+    <h3 class="text-2xl font-black uppercase tracking-widest text-red-900">Device Not Found</h3>
+    <p class="text-red-800 mt-2 font-medium">The hardware asset you are looking for does not exist or an error occurred.</p>
+    <button (click)="goBack()" 
+            class="mt-8 inline-flex items-center justify-center px-8 py-4 font-black uppercase tracking-[0.2em] text-white transition-all duration-300 bg-primary border-b-[4px] border-red-900 rounded-md hover:bg-red-900 hover:border-primary hover:shadow-[0_0_20px_rgba(153,27,27,0.5)] active:border-b-0 active:translate-y-[4px]">
+      System Return
+    </button>
+  </div>
+
+  <!-- Device Content -->
+  <div *ngIf="!loading && !error && device" class="bg-white shadow-[0_15px_50px_-15px_rgba(23,42,58,0.5)] rounded-xl overflow-hidden border-[4px] border-primary relative mt-4">
+    <div class="bg-gray-50/80 px-4 sm:px-8 py-6 border-b-[4px] border-secondary flex flex-col sm:flex-row justify-between items-center gap-6 sm:gap-0 text-center sm:text-left">
+      <div class="flex flex-col sm:flex-row items-center gap-4 sm:space-x-4">
+        <button (click)="goBack()" class="flex items-center justify-center p-2 bg-gray-200 text-primary border-2 border-transparent hover:border-primary rounded-md transition-all hover:shadow-md h-[44px]">
+          <mat-icon style="font-size: 24px; width: 24px; height: 24px;">arrow_back</mat-icon>
+        </button>
+        <div class="flex flex-wrap justify-center sm:justify-start items-center gap-3">
+          <h2 class="text-2xl sm:text-3xl font-black text-primary uppercase tracking-widest m-0 leading-none mt-1.5">{{device.name}}</h2>
+          <span class="w-24 justify-center px-2 py-1 inline-flex text-xs leading-5 font-black uppercase tracking-widest rounded-md bg-primary text-white border-l-[3px] border-light">
+            {{device.type}}
+          </span>
+        </div>
+      </div>
+      <div class="w-full sm:w-auto mt-4 sm:mt-0">
+        <button [routerLink]="['/devices/edit', device.id]" 
+                class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 font-black uppercase tracking-[0.15em] text-white transition-all duration-300 bg-secondary border-b-[4px] border-primary rounded-md hover:bg-primary-hover hover:border-primary hover:shadow-[0_0_20px_rgba(119,47,26,0.7)] active:border-b-0 active:translate-y-[4px]">
+          <mat-icon class="mr-2">edit_square</mat-icon> Modify
+        </button>
+      </div>
+    </div>
+
+    <div class="p-8 lg:p-12">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <!-- Hardware Specs -->
+        <div class="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-1 h-full bg-secondary"></div>
+          <h3 class="text-lg font-black uppercase tracking-widest text-primary mb-6 flex items-center">
+            <mat-icon class="mr-3 text-secondary">memory</mat-icon> Hardware Data
+          </h3>
+          <mat-divider class="mb-6 border-gray-300"></mat-divider>
+          
+          <dl class="space-y-5">
+            <div class="flex justify-between items-center">
+              <dt class="text-xs font-bold uppercase tracking-wider text-gray-500">Manufacturer</dt>
+              <dd class="text-sm font-black text-primary">{{device.manufacturer}}</dd>
+            </div>
+            <mat-divider class="border-gray-100"></mat-divider>
+            <div class="flex justify-between items-center">
+              <dt class="text-xs font-bold uppercase tracking-wider text-gray-500">Processor</dt>
+              <dd class="text-sm font-black text-primary">{{device.processor}}</dd>
+            </div>
+            <mat-divider class="border-gray-100"></mat-divider>
+            <div class="flex justify-between items-center">
+              <dt class="text-xs font-bold uppercase tracking-wider text-gray-500">Memory (RAM)</dt>
+              <dd class="text-sm font-black text-primary">{{device.ramAmount}}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <!-- Software Specs -->
+        <div class="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-1 h-full bg-primary-hover"></div>
+          <h3 class="text-lg font-black uppercase tracking-widest text-primary mb-6 flex items-center">
+            <mat-icon class="mr-3 text-primary-hover">data_array</mat-icon> Software Link
+          </h3>
+          <mat-divider class="mb-6 border-gray-300"></mat-divider>
+          
+          <dl class="space-y-5">
+            <div class="flex justify-between items-center">
+              <dt class="text-xs font-bold uppercase tracking-wider text-gray-500">System Core</dt>
+              <dd class="text-sm font-black text-primary">{{device.os}}</dd>
+            </div>
+            <mat-divider class="border-gray-100"></mat-divider>
+            <div class="flex justify-between items-center">
+              <dt class="text-xs font-bold uppercase tracking-wider text-gray-500">Version Sync</dt>
+              <dd class="text-sm font-black text-primary">{{device.osVersion}}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <!-- Assignment / Misc Specs -->
+        <div class="col-span-1 md:col-span-2 bg-gray-50 p-8 rounded-lg border-2 border-gray-200 shadow-sm mt-4">
+          <h3 class="text-lg font-black uppercase tracking-widest text-primary mb-6 flex items-center">
+            <mat-icon class="mr-3 text-dark">hub</mat-icon> Logistics Core
+          </h3>
+          <mat-divider class="mb-6 border-gray-300"></mat-divider>
+
+          <dl class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white p-5 rounded-md shadow-[0_4px_10px_rgba(0,0,0,0.05)] border-l-[4px] border-primary">
+              <dt class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Active User Assignment</dt>
+              <dd class="mt-2 text-lg font-black text-primary flex items-center">
+                <mat-icon class="mr-2 text-secondary">person_pin</mat-icon>
+                {{device.assignedUserName || 'Unassigned'}}
+              </dd>
+            </div>
+            
+            <div class="bg-white p-5 rounded-md shadow-[0_4px_10px_rgba(0,0,0,0.05)] border-l-[4px] border-primary-hover">
+              <dt class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Status Description</dt>
+              <dd class="mt-2 text-sm font-medium leading-relaxed text-gray-800">
+                {{device.description || 'No system description provided.'}}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

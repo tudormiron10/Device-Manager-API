@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom premium styling defaults */
+body {
+    background-color: #f8fafc;
+    color: #1e293b;
+    font-family: 'Inter', sans-serif;
+}
+
+html, body { height: 100%; }
+
+/* --- Tech Custom Snackbar Styling --- */
+.tech-snackbar {
+    margin-top: 2rem !important; /* Spacing from the absolute top */
+}
+
+/* Material Design Component overrides for our custom class */
+.tech-snackbar .mdc-snackbar__surface {
+    background-color: #254521 !important; /* Green affirmative */
+    border: 4px solid #172A3A !important; /* Primary border */
+    border-radius: 8px !important;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 25px rgba(37, 69, 33, 0.8) !important;
+    transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out !important;
+    opacity: 0.95 !important;
+}
+
+.tech-snackbar:hover .mdc-snackbar__surface {
+    opacity: 1 !important;
+}
+
+.tech-snackbar .mdc-snackbar__label {
+    color: #ffffff !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.15em !important;
+    text-transform: uppercase !important;
+    font-size: 0.85rem !important;
+}
+
+.tech-snackbar .mat-mdc-button.mat-mdc-snack-bar-action {
+    color: #ffaf87 !important; /* light */
+    font-weight: 900 !important;
+    letter-spacing: 0.1em !important;
+    text-transform: uppercase !important;
+    border: 2px solid transparent !important;
+    transition: all 0.3s ease !important;
+    padding: 0 12px !important;
+}
+
+.tech-snackbar .mat-mdc-button.mat-mdc-snack-bar-action:hover {
+    border-color: #ffaf87 !important;
+    background-color: transparent !important;
+}

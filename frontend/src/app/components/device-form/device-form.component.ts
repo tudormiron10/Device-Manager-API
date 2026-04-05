@@ -1,0 +1,105 @@
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule, Location } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { ApiService } from '../../services/api.service';
+
+@Component({
+  selector: 'app-device-form',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSnackBarModule
+  ],
+  templateUrl: './device-form.component.html'
+})
+export class DeviceFormComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private apiService = inject(ApiService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private location = inject(Location);
+  private snackBar = inject(MatSnackBar);
+
+  deviceForm: FormGroup;
+  isEditMode = false;
+  deviceId: string | null = null;
+  
+  deviceTypes = ['phone', 'tablet'];
+
+  constructor() {
+    this.deviceForm = this.fb.group({
+      name: ['', Validators.required],
+      manufacturer: ['', Validators.required],
+      type: ['phone', Validators.required],
+      os: ['', Validators.required],
+      osVersion: ['', Validators.required],
+      processor: ['', Validators.required],
+      ramAmount: ['', Validators.required],
+      description: ['']
+    });
+  }
+
+  ngOnInit(): void {
+    this.deviceId = this.route.snapshot.paramMap.get('id');
+    if (this.deviceId) {
+      this.isEditMode = true;
+      this.apiService.getDeviceById(this.deviceId).subscribe({
+        next: (device) => {
+          this.deviceForm.patchValue({
+            name: device.name,
+            manufacturer: device.manufacturer,
+            type: device.type,
+            os: device.os,
+            osVersion: device.osVersion,
+            processor: device.processor,
+            ramAmount: device.ramAmount,
+            description: device.description
+          });
+        },
+        error: () => this.snackBar.open('Error fetching device data', 'Close', { duration: 3000 })
+      });
+    }
+  }
+
+  onSubmit(): void {
+    if (this.deviceForm.invalid) return;
+
+    if (this.isEditMode && this.deviceId) {
+      this.apiService.updateDevice(this.deviceId, this.deviceForm.value).subscribe({
+        next: () => {
+          this.snackBar.open('Device updated successfully', 'Close', { duration: 3000 });
+          this.router.navigate(['/devices', this.deviceId]);
+        },
+        error: (err) => this.handleError(err)
+      });
+    } else {
+      this.apiService.createDevice(this.deviceForm.value).subscribe({
+        next: (created) => {
+          this.snackBar.open('Device created successfully', 'Close', { duration: 3000 });
+          this.router.navigate(['/devices', created.id]);
+        },
+        error: (err) => this.handleError(err)
+      });
+    }
+  }
+
+  handleError(err: any): void {
+    if (err.status === 409) {
+      this.deviceForm.get('name')?.setErrors({ conflict: true });
+      this.snackBar.open(err.error?.message || 'A device with this name already exists.', 'Close', { duration: 5000 });
+    } else {
+      this.snackBar.open('An unexpected error occurred.', 'Close', { duration: 5000 });
+    }
+  }
+
+  goBack(): void {
+    this.location.back();
+  }
+}

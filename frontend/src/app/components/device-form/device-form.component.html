@@ -1,0 +1,117 @@
+<div class="max-w-4xl mx-auto bg-white shadow-[0_15px_50px_-15px_rgba(23,42,58,0.5)] rounded-xl overflow-hidden border-[4px] border-primary relative">
+  
+  <!-- Header -->
+  <div class="px-4 sm:px-8 py-6 border-b-[4px] border-secondary flex flex-col sm:flex-row items-center justify-center sm:justify-start bg-gray-50/80 text-center sm:text-left gap-4 sm:gap-0">
+    <button (click)="goBack()" 
+            class="p-2 sm:mr-6 mb-2 sm:mb-0 bg-gray-200 text-primary border-2 border-transparent hover:border-primary rounded-md transition-all hover:shadow-md flex items-center justify-center">
+      <mat-icon style="font-size: 24px; width: 24px; height: 24px;">arrow_back</mat-icon>
+    </button>
+    <div class="flex flex-col">
+      <h2 class="text-2xl sm:text-3xl leading-6 font-black uppercase tracking-wider text-primary m-0">
+        {{ isEditMode ? 'Modify Config' : 'Register Hardware' }}
+      </h2>
+      <p class="mt-2 text-xs sm:text-sm font-medium text-dark tracking-wide">
+        {{ isEditMode ? 'Update asset details safely.' : 'Fill in the specifications for the new device asset.' }}
+      </p>
+    </div>
+  </div>
+
+  <div class="p-8 lg:p-12 bg-white">
+    <form [formGroup]="deviceForm" (ngSubmit)="onSubmit()" class="flex flex-col space-y-10">
+      
+      <!-- Section 1: Identification -->
+      <div class="bg-gray-50 p-8 rounded-lg border-2 border-gray-200 shadow-sm relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-1 h-full bg-secondary"></div>
+        <h3 class="text-lg font-black uppercase tracking-widest text-primary mb-6 flex items-center">
+          <mat-icon class="mr-3 text-secondary">fingerprint</mat-icon> Base Identity
+        </h3>
+        <hr class="mb-6 border-gray-300">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <!-- Name -->
+          <div class="flex flex-col">
+            <label class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">Device Name/Alias *</label>
+            <input type="text" formControlName="name" placeholder="E.g. Engineering iPhone" 
+                   class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:ring-0 focus:border-secondary outline-none transition-all shadow-sm font-bold text-primary">
+            <div *ngIf="deviceForm.get('name')?.touched && deviceForm.get('name')?.hasError('required')" class="text-secondary text-xs mt-2 font-black tracking-widest uppercase">Required</div>
+            <div *ngIf="deviceForm.get('name')?.hasError('conflict')" class="text-secondary text-xs mt-2 font-black tracking-widest uppercase">Conflict: Exists</div>
+          </div>
+
+          <!-- Manufacturer -->
+          <div class="flex flex-col">
+            <label class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">Manufacturer *</label>
+            <input type="text" formControlName="manufacturer" placeholder="E.g. Apple" 
+                   class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:ring-0 focus:border-secondary outline-none transition-all shadow-sm font-bold text-primary">
+            <div *ngIf="deviceForm.get('manufacturer')?.touched && deviceForm.get('manufacturer')?.hasError('required')" class="text-secondary text-xs mt-2 font-black tracking-widest uppercase">Required</div>
+          </div>
+
+          <!-- Type -->
+          <div class="flex flex-col md:col-span-2">
+            <label class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">Platform Type *</label>
+            <select formControlName="type" class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:ring-0 focus:border-secondary outline-none transition-all shadow-sm bg-white font-black text-primary tracking-widest uppercase">
+              <option *ngFor="let type of deviceTypes" [value]="type">{{ type | uppercase }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Technical Specs -->
+      <div class="bg-gray-50 p-8 rounded-lg border-2 border-gray-200 shadow-sm relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-1 h-full bg-primary-hover"></div>
+        <h3 class="text-lg font-black uppercase tracking-widest text-primary mb-6 flex items-center">
+          <mat-icon class="mr-3 text-primary-hover">developer_board</mat-icon> Technical Specifications
+        </h3>
+        <hr class="mb-6 border-gray-300">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="flex flex-col lg:col-span-2">
+            <label class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">Operating System *</label>
+            <input type="text" formControlName="os" placeholder="E.g. iOS" 
+                   class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:ring-0 focus:border-primary-hover outline-none transition-all shadow-sm font-bold text-primary">
+          </div>
+
+          <div class="flex flex-col lg:col-span-2">
+            <label class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">OS Version *</label>
+            <input type="text" formControlName="osVersion" placeholder="E.g. 17.2" 
+                   class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:ring-0 focus:border-primary-hover outline-none transition-all shadow-sm font-bold text-primary">
+          </div>
+
+          <div class="flex flex-col lg:col-span-2">
+            <label class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">Processor (CPU) *</label>
+            <input type="text" formControlName="processor" placeholder="E.g. A17 Pro" 
+                   class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:ring-0 focus:border-primary-hover outline-none transition-all shadow-sm font-bold text-primary">
+          </div>
+
+          <div class="flex flex-col lg:col-span-2">
+            <label class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">RAM Amount *</label>
+            <input type="text" formControlName="ramAmount" placeholder="E.g. 8GB" 
+                   class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:ring-0 focus:border-primary-hover outline-none transition-all shadow-sm font-bold text-primary">
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Notes -->
+      <div class="bg-gray-50 p-8 rounded-lg border-2 border-gray-200 shadow-sm relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-1 h-full bg-dark"></div>
+        <div class="flex flex-col">
+          <label class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-4 block">Internal Description / Tracking (Optional)</label>
+          <textarea formControlName="description" rows="4" placeholder="Additional details..." 
+                    class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:ring-0 focus:border-dark outline-none transition-all shadow-sm resize-y font-bold text-primary"></textarea>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-6 pt-6 border-t-[3px] border-gray-200">
+        <button type="button" (click)="goBack()" 
+                class="w-full sm:w-auto mt-4 sm:mt-0 px-8 py-3 rounded-md font-black uppercase tracking-[0.2em] text-primary bg-transparent border-2 border-primary hover:bg-primary hover:text-white transition-all shadow-none hover:shadow-[0_0_15px_rgba(23,42,58,0.5)] text-sm flex items-center justify-center">
+          <mat-icon class="mr-2">cancel</mat-icon> Cancel
+        </button>
+        <button type="submit" [disabled]="deviceForm.invalid" 
+                class="w-full sm:w-auto px-8 py-4 rounded-md font-black uppercase tracking-[0.2em] text-white bg-secondary border-b-[4px] border-primary hover:bg-primary-hover hover:border-primary hover:shadow-[0_0_20px_rgba(119,47,26,0.8)] active:border-b-0 active:translate-y-[4px] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:border-b-0 disabled:shadow-none text-sm flex items-center justify-center focus:outline-none">
+          <mat-icon class="mr-3">bolt</mat-icon>
+          {{ isEditMode ? 'Commit Config' : 'Deploy Asset' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

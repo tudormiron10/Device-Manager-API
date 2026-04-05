@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   # MongoDB Database
@@ -27,6 +26,18 @@ services:
     environment:
       - MongoDbSettings__ConnectionString=mongodb://mongodb:27017
       - MongoDbSettings__DatabaseName=DeviceManagerDB
+    restart: unless-stopped
+
+  # Angular Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: devicemanager-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
     restart: unless-stopped
 
 volumes:
