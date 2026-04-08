@@ -30,6 +30,17 @@ public class DevicesController : ControllerBase
     }
 
     /// <summary>
+    /// GET /api/devices/search?query=... - Free-text search with relevance ranking.
+    /// Case-insensitive and robust to formatting/tokenization.
+    /// </summary>
+    [HttpGet("search")]
+    public async Task<ActionResult<List<DeviceDto>>> Search([FromQuery] string query)
+    {
+        var devices = await _deviceService.SearchDevicesAsync(query);
+        return Ok(devices);
+    }
+
+    /// <summary>
     /// GET /api/devices/{id} - Returns a single device by ID. Public endpoint.
     /// </summary>
     [HttpGet("{id}")]

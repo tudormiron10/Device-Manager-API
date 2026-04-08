@@ -2,6 +2,7 @@ using DeviceManager.Core.Exceptions;
 using DeviceManager.Core.DTOs;
 using DeviceManager.Core.Interfaces;
 using DeviceManager.Core.Models;
+using DeviceManager.Infrastructure.Helpers;
 
 namespace DeviceManager.Infrastructure.Services;
 
@@ -173,6 +174,108 @@ public class DeviceService : IDeviceService
             ?? throw new NotFoundException("Device", deviceId);
 
         return MapToDto(updated);
+    }
+
+    public async Task<List<DeviceDto>> SearchDevicesAsync(string query)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+            return await GetAllDevicesAsync();
+
+        var devices = await _deviceRepository.GetAllAsync();
+        
+        // Normalize and tokenize (keep significant tokens only)
+        var tokens = query.ToLowerInvariant()
+            .Split(new[] { ' ', ',', '.', '-', '_', '/' }, StringSplitOptions.RemoveEmptyEntries)
+            .Where(t => t.Length >= 2)
+            .ToList();
+
+        if (tokens.Count == 0) return new List<DeviceDto>();
+
+        var scoredDevices = new List<(Device Device, int Score)>();
+
+        foreach (var device in devices)
+        {
+            int score = 0;
+            foreach (var token in tokens)
+            {
+                // Each field has its own significance weight
+                score += CalculateFieldScore(device.Name, token, 20);
+                score += CalculateFieldScore(device.Manufacturer, token, 15);
+                score += CalculateFieldScore(device.Processor, token, 10);
+                score += CalculateFieldScore(device.RamAmount, token, 5);
+            }
+
+            // Quality threshold: Similarity-based search naturally excludes "noise" (like "Ana", "are", "mere")
+            // as they won't match any hardware terms with a similarity > 0.3
+            if (score >= 10)
+            {
+                scoredDevices.Add((device, score));
+            }
+        }
+
+        var results = scoredDevices
+            .OrderByDescending(x => x.Score)
+            .ThenBy(x => x.Device.Name)
+            .Select(x => x.Device)
+            .ToList();
+
+        // Enriched Mapping
+        var deviceDtos = new List<DeviceDto>();
+        foreach (var device in results)
+        {
+            var dto = MapToDto(device);
+            if (!string.IsNullOrEmpty(device.AssignedUserId))
+            {
+                var user = await _userRepository.GetByIdAsync(device.AssignedUserId);
+                dto.AssignedUserName = user?.Name;
+                if (user != null) dto.Location = user.Location;
+            }
+            deviceDtos.Add(dto);
+        }
+
+        return deviceDtos;
+    }
+
+    /// <summary>
+    /// Calculates a weighted score for a field based on match quality.
+    /// Uses Levenshtein similarity to handle typos and noise.
+    /// </summary>
+    private static int CalculateFieldScore(string fieldValue, string token, int weight)
+    {
+        if (string.IsNullOrWhiteSpace(fieldValue) || string.IsNullOrWhiteSpace(token)) return 0;
+
+        // Split field into words (e.g. "Galaxy Tab S10 Ultra" -> ["Galaxy", "Tab", "S10", "Ultra"])
+        var words = fieldValue.Split(new[] { ' ', ',', '.', '-', '_', '/' }, StringSplitOptions.RemoveEmptyEntries);
+        int maxWordScore = 0;
+
+        foreach (var word in words)
+        {
+            int currentScore = 0;
+
+            // 1. Exact Match (Highest priority)
+            if (string.Equals(word, token, StringComparison.OrdinalIgnoreCase))
+            {
+                currentScore = weight * 5;
+            }
+            else
+            {
+                // 2. Fuzzy Similarity (Handles typos like "Samsug")
+                double similarity = StringSimilarityHelper.GetSimilarity(word, token);
+                if (similarity >= 0.8)
+                {
+                    currentScore = (int)(weight * 3 * similarity);
+                }
+                // 3. Partial Containment (Fallback for longer tokens)
+                else if (token.Length >= 3 && word.Contains(token, StringComparison.OrdinalIgnoreCase))
+                {
+                    currentScore = weight;
+                }
+            }
+
+            if (currentScore > maxWordScore) maxWordScore = currentScore;
+        }
+
+        return maxWordScore;
     }
 
     /// <summary>

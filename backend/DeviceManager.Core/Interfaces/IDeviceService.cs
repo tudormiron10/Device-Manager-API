@@ -15,4 +15,5 @@ public interface IDeviceService
     Task<bool> DeleteDeviceAsync(string id);
     Task<DeviceDto> AssignDeviceAsync(string deviceId, string userId);
     Task<DeviceDto> UnassignDeviceAsync(string deviceId, string userId);
+    Task<List<DeviceDto>> SearchDevicesAsync(string query);
 }

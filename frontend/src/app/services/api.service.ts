@@ -14,6 +14,10 @@ export class ApiService {
     return this.http.get<DeviceDto[]>(`${this.BASE_URL}/Devices`);
   }
 
+  searchDevices(query: string): Observable<DeviceDto[]> {
+    return this.http.get<DeviceDto[]>(`${this.BASE_URL}/Devices/search`, { params: { query } });
+  }
+
   getDeviceById(id: string): Observable<DeviceDto> {
     return this.http.get<DeviceDto>(`${this.BASE_URL}/Devices/${id}`);
   }

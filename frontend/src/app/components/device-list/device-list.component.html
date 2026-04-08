@@ -18,6 +18,26 @@
     </button>
   </div>
 
+  <!-- Search Bar Section (Bonus Phase: Free-text Search) -->
+  <div class="search-container flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="industrial-search-wrapper flex-1 w-full max-w-md relative group">
+      <mat-icon class="absolute left-4 top-1/2 -translate-y-1/2 text-[#1e293b] z-10 opacity-60 group-focus-within:opacity-100 transition-opacity">search</mat-icon>
+      <input 
+        [formControl]="searchControl"
+        type="text" 
+        placeholder="SEARCH DEVICES" 
+        class="industrial-search-bar"
+      >
+    </div>
+    <div class="hidden lg:flex items-center gap-3 px-4 py-2 bg-white border-2 border-[#e2e8f0] rounded">
+        <div class="flex flex-col">
+            <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Database Index</span>
+            <span class="text-[15px] font-black text-[#1e3a1a] uppercase">Optimized Search</span>
+        </div>
+        <mat-icon class="text-green-500 scale-75">sensors</mat-icon>
+    </div>
+  </div>
+
   <div class="p-0 overflow-x-auto">
     <table mat-table [dataSource]="devices" class="w-full min-w-[900px] industrial-table">
       
@@ -84,7 +104,7 @@
     <!-- Empty State -->
     <div *ngIf="devices.length === 0" class="text-center py-24 bg-gray-50 border-t-2 border-gray-100">
         <mat-icon class="text-gray-200 scale-[3] mb-12">dashboard_customize</mat-icon>
-        <h3 class="text-xl font-black uppercase tracking-[0.2em] text-[#0f172a]">Terminal Empty</h3>
+        <h3 class="text-xl font-black uppercase tracking-[0.2em] text-[#0f172a]">Empty List</h3>
         <p class="mt-2 text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em]">Awaiting hardware registration command...</p>
     </div>
   </div>
