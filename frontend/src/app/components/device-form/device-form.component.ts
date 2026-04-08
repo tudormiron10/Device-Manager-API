@@ -35,7 +35,7 @@ export class DeviceFormComponent implements OnInit {
   deviceId: string | null = null;
   isGeneratingAI = false;
   
-  deviceTypes = ['phone', 'tablet'];
+  deviceTypes = ['phone', 'tablet', 'laptop', 'handheld'];
 
   constructor() {
     this.deviceForm = this.fb.group({

@@ -24,6 +24,7 @@ services:
     depends_on:
       - mongodb
     environment:
+      - ASPNETCORE_ENVIRONMENT=Development
       - MongoDbSettings__ConnectionString=mongodb://mongodb:27017
       - MongoDbSettings__DatabaseName=DeviceManagerDB
       - GroqSettings__BaseUrl=https://api.groq.com/openai/v1
@@ -32,6 +33,7 @@ services:
       - JwtSettings__SecretKey=${JWT_SECRET_KEY:-MarshTech-Test-Key-2026-ChangeInProd!}
       - JwtSettings__Issuer=MarshTechAPI
       - JwtSettings__Audience=MarshTechFrontend
+      - JwtSettings__ExpirationHours=24
     restart: unless-stopped
 
   # Angular Frontend

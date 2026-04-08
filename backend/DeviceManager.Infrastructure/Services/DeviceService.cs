@@ -201,12 +201,12 @@ public class DeviceService : IDeviceService
                 // Each field has its own significance weight
                 score += CalculateFieldScore(device.Name, token, 20);
                 score += CalculateFieldScore(device.Manufacturer, token, 15);
+                score += CalculateFieldScore(device.Type, token, 12);
                 score += CalculateFieldScore(device.Processor, token, 10);
                 score += CalculateFieldScore(device.RamAmount, token, 5);
             }
 
-            // Quality threshold: Similarity-based search naturally excludes "noise" (like "Ana", "are", "mere")
-            // as they won't match any hardware terms with a similarity > 0.3
+            // Quality threshold: Similarity-based search naturally excludes "noise"
             if (score >= 10)
             {
                 scoredDevices.Add((device, score));

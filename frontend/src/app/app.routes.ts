@@ -4,12 +4,13 @@ import { DeviceDetailComponent } from './components/device-detail/device-detail.
 import { DeviceFormComponent } from './components/device-form/device-form.component';
 import { LoginComponent } from './components/auth/login/login.component';
 import { RegisterComponent } from './components/auth/register/register.component';
+import { LandingPageComponent } from './components/landing-page/landing-page.component';
 import { authGuard } from './guards/auth.guard';
 import { UnauthorizedComponent } from './components/auth/unauthorized/unauthorized.component';
 import { roleGuard } from './guards/role.guard';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'devices', pathMatch: 'full' },
+    { path: '', component: LandingPageComponent, pathMatch: 'full' },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'unauthorized', component: UnauthorizedComponent },
@@ -17,5 +18,5 @@ export const routes: Routes = [
     { path: 'devices/new', component: DeviceFormComponent, canActivate: [authGuard, roleGuard] },
     { path: 'devices/edit/:id', component: DeviceFormComponent, canActivate: [authGuard, roleGuard] },
     { path: 'devices/:id', component: DeviceDetailComponent },
-    { path: '**', redirectTo: 'devices' }
+    { path: '**', redirectTo: '' }
 ];

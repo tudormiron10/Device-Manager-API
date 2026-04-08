@@ -22,6 +22,9 @@ builder.Services.AddScoped<IDeviceService, DeviceService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IGeneratorService, GroqGeneratorService>();
 
+// Data Seeder
+builder.Services.AddScoped<MongoDbSeeder>();
+
 // HTTP Client for external APIs (AI)
 builder.Services.AddHttpClient();
 
@@ -74,6 +77,13 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Run seeder at startup
+using (var scope = app.Services.CreateScope())
+{
+    var seeder = scope.ServiceProvider.GetRequiredService<MongoDbSeeder>();
+    await seeder.SeedAsync();
+}
+
 // Middleware pipeline
 if (app.Environment.IsDevelopment())
 {
@@ -82,7 +92,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseExceptionHandler();
-
 app.UseCors("AllowAngular");
 app.UseAuthentication();
 app.UseAuthorization();
