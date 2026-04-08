@@ -20,6 +20,10 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 // Dependency Injection - Services
 builder.Services.AddScoped<IDeviceService, DeviceService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IGeneratorService, GroqGeneratorService>();
+
+// HTTP Client for external APIs (AI)
+builder.Services.AddHttpClient();
 
 // Controllers
 builder.Services.AddControllers();

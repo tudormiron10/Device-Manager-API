@@ -94,8 +94,24 @@
       <div class="bg-gray-50 p-8 rounded-lg border-2 border-gray-200 shadow-sm relative overflow-hidden">
         <div class="absolute top-0 left-0 w-1 h-full bg-dark"></div>
         <div class="flex flex-col">
-          <label class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-4 block">Internal Description / Tracking (Optional)</label>
-          <textarea formControlName="description" rows="4" placeholder="Additional details..." 
+          <div class="flex justify-between items-end mb-4">
+            <label class="text-xs font-bold uppercase tracking-wider text-gray-500 block">Internal Description / Tracking (Optional)</label>
+            
+            <!-- AI Generate Button -->
+            <button type="button" (click)="generateAI()" [disabled]="isGeneratingAI"
+                    class="flex items-center text-[10px] font-black uppercase tracking-[0.15em] text-[#4f46e5] hover:text-[#4338ca] transition-colors disabled:opacity-50 focus:outline-none">
+              <ng-container *ngIf="!isGeneratingAI">
+                <mat-icon class="mr-1 !h-4 !w-4 !text-base">auto_awesome</mat-icon>
+                AI Generator
+              </ng-container>
+              <ng-container *ngIf="isGeneratingAI">
+                <mat-spinner diameter="14" class="mr-2 industrial-spinner"></mat-spinner>
+                AI Sync...
+              </ng-container>
+            </button>
+          </div>
+
+          <textarea formControlName="description" rows="4" placeholder="Brief system notes or generated content..." 
                     class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:ring-0 focus:border-dark outline-none transition-all shadow-sm resize-y font-bold text-primary"></textarea>
         </div>
       </div>

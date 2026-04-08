@@ -11,10 +11,12 @@ namespace DeviceManager.API.Controllers;
 public class DevicesController : ControllerBase
 {
     private readonly IDeviceService _deviceService;
+    private readonly IGeneratorService _generatorService;
 
-    public DevicesController(IDeviceService deviceService)
+    public DevicesController(IDeviceService deviceService, IGeneratorService generatorService)
     {
         _deviceService = deviceService;
+        _generatorService = generatorService;
     }
 
     /// <summary>
@@ -98,5 +100,16 @@ public class DevicesController : ControllerBase
 
         var device = await _deviceService.UnassignDeviceAsync(id, userId);
         return Ok(device);
+    }
+
+    /// <summary>
+    /// POST /api/devices/generate-description - Generates an AI description for a device.
+    /// </summary>
+    [HttpPost("generate-description")]
+    [Authorize]
+    public async Task<ActionResult<string>> GenerateDescription([FromBody] DeviceGeneratorDto dto)
+    {
+        var description = await _generatorService.GenerateDeviceDescriptionAsync(dto);
+        return Ok(new { description });
     }
 }

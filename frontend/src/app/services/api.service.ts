@@ -41,4 +41,8 @@ export class ApiService {
   unassignDevice(id: string): Observable<DeviceDto> {
     return this.http.post<DeviceDto>(`${this.BASE_URL}/Devices/${id}/unassign`, {});
   }
+
+  generateDescription(specs: any): Observable<{description: string}> {
+    return this.http.post<{description: string}>(`${this.BASE_URL}/Devices/generate-description`, specs);
+  }
 }

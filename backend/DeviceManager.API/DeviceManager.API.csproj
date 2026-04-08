@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
     <ProjectReference Include="..\DeviceManager.Core\DeviceManager.Core.csproj" />
@@ -14,6 +14,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>d448c2c1-2264-49f1-a2d5-90884054b9ed</UserSecretsId>
   </PropertyGroup>
 
 </Project>

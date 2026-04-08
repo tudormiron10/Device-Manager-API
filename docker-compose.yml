@@ -26,6 +26,12 @@ services:
     environment:
       - MongoDbSettings__ConnectionString=mongodb://mongodb:27017
       - MongoDbSettings__DatabaseName=DeviceManagerDB
+      - GroqSettings__BaseUrl=https://api.groq.com/openai/v1
+      - GroqSettings__ApiKey=${GROQ_API_KEY}
+      - GroqSettings__Model=llama-3.1-8b-instant
+      - JwtSettings__SecretKey=${JWT_SECRET_KEY:-MarshTech-Test-Key-2026-ChangeInProd!}
+      - JwtSettings__Issuer=MarshTechAPI
+      - JwtSettings__Audience=MarshTechFrontend
     restart: unless-stopped
 
   # Angular Frontend
