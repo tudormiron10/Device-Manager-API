@@ -35,8 +35,31 @@
 
             <div class="flex flex-col">
               <label class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">Security Password *</label>
-              <input type="password" formControlName="password" placeholder="••••••••"
-                     class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:ring-0 focus:border-secondary outline-none transition-all shadow-sm font-bold text-primary">
+              <div class="relative">
+                <input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="••••••••"
+                       class="w-full px-4 py-3 pr-12 rounded-lg border-2 border-gray-200 focus:ring-0 focus:border-secondary outline-none transition-all shadow-sm font-bold text-primary">
+                <button type="button" (click)="showPassword = !showPassword"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors">
+                  <mat-icon class="!text-xl">{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex flex-col">
+              <label class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">Confirm Password *</label>
+              <div class="relative">
+                <input [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword" placeholder="••••••••"
+                       class="w-full px-4 py-3 pr-12 rounded-lg border-2 border-gray-200 focus:ring-0 focus:border-secondary outline-none transition-all shadow-sm font-bold text-primary"
+                       [ngClass]="{'border-red-400': registerForm.get('confirmPassword')?.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched}">
+                <button type="button" (click)="showConfirmPassword = !showConfirmPassword"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors">
+                  <mat-icon class="!text-xl">{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+              </div>
+              <p *ngIf="registerForm.get('confirmPassword')?.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched"
+                 class="text-red-500 text-[10px] font-black uppercase tracking-widest mt-2">
+                Passwords do not match
+              </p>
             </div>
           </div>
         </div>

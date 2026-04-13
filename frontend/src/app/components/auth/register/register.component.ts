@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { MatCardModule } from '@angular/material/card';
@@ -38,12 +38,28 @@ export class RegisterComponent {
     name: ['', [Validators.required, Validators.minLength(2)]],
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
+    confirmPassword: ['', [Validators.required]],
     role: ['', Validators.required],
     location: ['', Validators.required]
-  });
+  }, { validators: this.passwordMatchValidator });
 
   roles = ['Developer', 'QA Engineer', 'Project Manager', 'Designer', 'DevOps Engineer', 'Hardware Specialist'];
   isLoading = false;
+  showPassword = false;
+  showConfirmPassword = false;
+
+  private passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+    const password = control.get('password');
+    const confirmPassword = control.get('confirmPassword');
+    if (password && confirmPassword && password.value !== confirmPassword.value) {
+      confirmPassword.setErrors({ passwordMismatch: true });
+      return { passwordMismatch: true };
+    }
+    if (confirmPassword?.hasError('passwordMismatch')) {
+      confirmPassword.setErrors(null);
+    }
+    return null;
+  }
 
   onSubmit(): void {
     if (this.registerForm.invalid) return;
